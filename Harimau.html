@@ -37,30 +37,32 @@ button:hover { background-color: #C0392B; }
 </div>
 
 <script>
-const canvas = document.getElementById("traceCanvas");
-const ctx = canvas.getContext("2d");
-let drawing = false;
-ctx.lineWidth = 4;
-ctx.lineCap = "round";
-ctx.strokeStyle = "#2C3E50";
-
-function getPos(e) {
-    const rect = canvas.getBoundingClientRect();
-    if (e.touches) return { x: e.touches[0].clientX - rect.left, y: e.touches[0].clientY - rect.top };
-    return { x: e.offsetX, y: e.offsetY };
+function startDrawing(e) {
+    drawing = true;
+    const pos = getPos(e);
+    ctx.beginPath();
+    ctx.moveTo(pos.x, pos.y);
 }
 
-canvas.addEventListener("mousedown", e => { drawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); });
-canvas.addEventListener("mousemove", e => { if (!drawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); });
-canvas.addEventListener("mouseup", () => drawing = false);
-canvas.addEventListener("mouseleave", () => drawing = false);
+function draw(e) {
+    if (!drawing) return;
+    const pos = getPos(e);
+    ctx.lineTo(pos.x, pos.y);
+    ctx.stroke();
+}
 
-canvas.addEventListener("touchstart", e => { e.preventDefault(); drawing = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x, pos.y); });
-canvas.addEventListener("touchmove", e => { e.preventDefault(); if (!drawing) return; const pos = getPos(e); ctx.lineTo(pos.x, pos.y); ctx.stroke(); });
-canvas.addEventListener("touchend", () => drawing = false);
+function stopDrawing() {
+    drawing = false;
+}
 
-function clearCanvas() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
-</script>
+// 鼠标事件
+canvas.addEventListener("mousedown", startDrawing);
+canvas.addEventListener("mousemove", draw);
+canvas.addEventListener("mouseup", stopDrawing);
+canvas.addEventListener("mouseleave", stopDrawing);
 
-</body>
-</html>
+// 触屏事件
+canvas.addEventListener("touchstart", e => { e.preventDefault(); startDrawing(e); });
+canvas.addEventListener("touchmove", e => { e.preventDefault(); draw(e); });
+canvas.addEventListener("touchend", stopDrawing);
+
