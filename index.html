@@ -28,6 +28,14 @@ h1 { color: #2d6a4f; }
     font-weight: bold;
 }
 
+/* 图片 */
+.image-box img {
+    width: 200px;
+    border-radius: 10px;
+    margin: 10px 0;
+}
+
+/* 描字 */
 .trace-area {
     position: relative;
     margin: 30px auto;
@@ -70,6 +78,15 @@ button {
 
     <div class="word">HARIMAU</div>
 
+    <!-- 🖼️ 图片 -->
+    <div class="image-box">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg" id="animalImg">
+        <br>
+        <a href="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg" download>
+            <button>Muat Turun Gambar</button>
+        </a>
+    </div>
+
     <div class="trace-area">
         <div class="trace-guide">HARIMAU</div>
         <canvas id="traceCanvas" width="420" height="80"></canvas>
@@ -79,12 +96,21 @@ button {
     <button onclick="clearCanvas()">✖ Kosongkan</button>
 </div>
 
+<!-- 🔊 音效（关键：必须在页面里） -->
+<audio id="correctSound">
+    <source src="https://www.soundjay.com/human/cheering-01.mp3" type="audio/mpeg">
+</audio>
+
+<audio id="wrongSound">
+    <source src="https://www.soundjay.com/human/fail-trombone-01.mp3" type="audio/mpeg">
+</audio>
+
 <script>
 const canvas = document.getElementById("traceCanvas");
 const ctx = canvas.getContext("2d");
 
 let drawing = false;
-let totalLength = 0; // ⭐ 新：记录写字长度
+let totalLength = 0;
 let lastX = 0;
 let lastY = 0;
 
@@ -109,11 +135,9 @@ canvas.addEventListener("mousemove", e => {
     if (!drawing) return;
     const pos = getPos(e);
 
-    // ⭐ 计算移动距离
     const dx = pos.x - lastX;
     const dy = pos.y - lastY;
-    const distance = Math.sqrt(dx*dx + dy*dy);
-    totalLength += distance;
+    totalLength += Math.sqrt(dx*dx + dy*dy);
 
     ctx.lineTo(pos.x, pos.y);
     ctx.stroke();
@@ -130,25 +154,22 @@ function clearCanvas() {
     totalLength = 0;
 }
 
-/* 🔊 内嵌音效（一定会响） */
-function playCorrect() {
-    const audio = new Audio("data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQgAAAAA");
-    audio.play();
+/* 🔊 关键修复：强制播放 */
+function playSound(id) {
+    const audio = document.getElementById(id);
+    audio.currentTime = 0;
+    audio.play().catch(() => {
+        console.log("Audio blocked");
+    });
 }
 
-function playWrong() {
-    const audio = new Audio("data:audio/wav;base64,UklGRlQAAABXQVZFZm10IBAAAAABAAEAESsAACJWAAACABAAZGF0YQgAAAAA");
-    audio.play();
-}
-
-/* ⭐ 判断更严格 */
 function checkWriting() {
-    if (totalLength > 800) { // ⭐ 阈值提高
+    if (totalLength > 800) {
+        playSound("correctSound");
         alert("Bagus! 🎉");
-        playCorrect();
     } else {
+        playSound("wrongSound");
         alert("Cuba lagi 😢");
-        playWrong();
     }
 }
 </script>
