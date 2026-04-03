@@ -5,65 +5,83 @@
 <title>Latihan Menulis - Harimau</title>
 
 <style>
-body { font-family: Arial, sans-serif; background-color: #F9F5EF; text-align: center; margin: 0; padding: 30px; }
-.container { max-width: 700px; margin: auto; background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-h1 { color: #E67E22; font-size: 42px; }
-.word { font-size: 48px; font-weight: bold; color: #2C3E50; }
+body {
+    font-family: Arial;
+    background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
+    text-align: center;
+    padding: 30px;
+}
+.container {
+    max-width: 700px;
+    margin: auto;
+    background: #ffffffdd;
+    padding: 25px;
+    border-radius: 12px;
+}
+.word { font-size: 48px; font-weight: bold; }
 .trace-area { position: relative; margin: 30px auto; width: 420px; height: 80px; }
-.trace-guide { font-size: 56px; font-weight: bold; color: transparent; -webkit-text-stroke: 2px #B0B0B0; letter-spacing: 6px; user-select: none; }
-#traceCanvas { position: absolute; top: 0; left: 0; border: 1px dashed #ccc; cursor: crosshair; }
-button { font-size: 20px; padding: 12px 24px; background-color: #E74C3C; color: white; border: none; border-radius: 8px; cursor: pointer; margin-top: 20px; }
-button:hover { background-color: #C0392B; }
-.note { margin-top: 15px; font-size: 16px; color: #555; }
+.trace-guide { font-size: 56px; color: transparent; -webkit-text-stroke: 2px #999; letter-spacing: 6px; }
+#traceCanvas { position: absolute; border: 1px dashed #ccc; }
+button { padding: 10px 20px; margin: 10px; }
 </style>
 </head>
 
 <body>
-
 <div class="container">
-    <h1>Latihan Menulis</h1>
-    <div class="word">HARIMAU</div>
+<h1>Latihan Menulis 🐾</h1>
 
-    <div class="trace-area">
-        <div class="trace-guide">HARIMAU</div>
-        <canvas id="traceCanvas" width="420" height="80"></canvas>
-    </div>
+<div class="word">HARIMAU</div>
 
-    <button onclick="clearCanvas()">✖ Kosongkan</button>
-
-    <div class="note">
-        Tulis perkataan di atas huruf titik-titik.
-    </div>
+<div class="trace-area">
+<div class="trace-guide">HARIMAU</div>
+<canvas id="traceCanvas" width="420" height="80"></canvas>
 </div>
 
+<button onclick="checkWriting()">✔ Semak</button>
+<button onclick="clearCanvas()">✖ Kosongkan</button>
+
+</div>
+
+<audio id="correctSound" src="https://www.soundjay.com/human/cheering-01.mp3"></audio>
+<audio id="wrongSound" src="https://www.soundjay.com/human/fail-trombone-01.mp3"></audio>
+
 <script>
-function startDrawing(e) {
+const canvas = document.getElementById("traceCanvas");
+const ctx = canvas.getContext("2d");
+
+let drawing = false;
+let strokes = 0;
+
+ctx.lineWidth = 4;
+
+canvas.addEventListener("mousedown", e => {
     drawing = true;
-    const pos = getPos(e);
+    strokes++;
     ctx.beginPath();
-    ctx.moveTo(pos.x, pos.y);
-}
+});
 
-function draw(e) {
+canvas.addEventListener("mousemove", e => {
     if (!drawing) return;
-    const pos = getPos(e);
-    ctx.lineTo(pos.x, pos.y);
+    ctx.lineTo(e.offsetX, e.offsetY);
     ctx.stroke();
+});
+
+canvas.addEventListener("mouseup", () => drawing = false);
+
+function clearCanvas() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    strokes = 0;
 }
 
-function stopDrawing() {
-    drawing = false;
+function checkWriting() {
+    if (strokes > 5) {
+        alert("Bagus! 🎉");
+        document.getElementById("correctSound").play();
+    } else {
+        alert("Cuba lagi 😢");
+        document.getElementById("wrongSound").play();
+    }
 }
-
-// 鼠标事件
-canvas.addEventListener("mousedown", startDrawing);
-canvas.addEventListener("mousemove", draw);
-canvas.addEventListener("mouseup", stopDrawing);
-canvas.addEventListener("mouseleave", stopDrawing);
-
-// 触屏事件
-canvas.addEventListener("touchstart", e => { e.preventDefault(); startDrawing(e); });
-canvas.addEventListener("touchmove", e => { e.preventDefault(); draw(e); });
-canvas.addEventListener("touchend", stopDrawing);
-
-
+</script>
+</body>
+</html>
