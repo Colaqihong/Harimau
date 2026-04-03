@@ -25,7 +25,6 @@ body {
     font-weight: bold;
 }
 
-/* 🧠 关键：统一对齐系统 */
 .trace-area {
     position: relative;
     width: 420px;
@@ -33,13 +32,12 @@ body {
     margin: 30px auto;
 }
 
-/* ⭐ 字体垂直居中 */
 .trace-guide {
     position: absolute;
     width: 100%;
     height: 100%;
     display: flex;
-    align-items: center;   /* 垂直居中 */
+    align-items: center;
     justify-content: center;
 
     font-size: 56px;
@@ -50,30 +48,24 @@ body {
     -webkit-text-stroke: 2px #999;
 }
 
-/* ⭐ canvas 完全覆盖 */
 #traceCanvas {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 420px;
     height: 100px;
     z-index: 2;
     border: 1px dashed #ccc;
 }
 
-/* 图片 */
 .image-box img {
     width: 200px;
     border-radius: 12px;
 }
 
-/* 按钮 */
 button {
     padding: 12px 20px;
     margin: 10px;
     border-radius: 8px;
     border: none;
-    cursor: pointer;
 }
 
 .check-btn { background: #4CAF50; color: white; }
@@ -165,7 +157,7 @@ function playSuccessSound() {
         osc.connect(gain);
         gain.connect(audioCtx.destination);
         osc.start(audioCtx.currentTime + i * 0.1);
-        osc.stop(audioCtx.currentTime + i * 0.1 + 0.2);
+        osc.stop(ctx.currentTime + i * 0.1 + 0.2);
     }
 }
 
@@ -181,11 +173,11 @@ function playFailSound() {
     osc.stop(audioCtx.currentTime + 0.4);
 }
 
-/* 判断 */
+/* ⭐ 调整后的判断（更容易成功） */
 function checkWriting() {
     const result = document.getElementById("result");
 
-    if (totalLength > 900) {
+    if (totalLength > 400) {
         result.innerHTML = "Bagus! 🎉";
         result.style.color = "green";
         playSuccessSound();
