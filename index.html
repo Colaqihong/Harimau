@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="ms">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Latihan Menulis - Harimau</title>
+<title>Writing Practice - Tiger</title>
 <style>
 body { font-family: Arial; background: linear-gradient(to bottom, #a8e6cf, #dcedc1); text-align:center; padding:30px; }
 .container { max-width:700px; margin:auto; background:#ffffffee; padding:25px; border-radius:15px; }
@@ -19,17 +19,17 @@ button { padding:12px 20px; margin:10px; border-radius:8px; border:none; cursor:
 </head>
 <body>
 <div class="container">
-<h1>Latihan Menulis 🐾</h1>
-<div class="word">HARIMAU</div>
+<h1>Writing Practice 🐾</h1>
+<div class="word">TIGER</div>
 <div class="image-box">
-<img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg" alt="Tiger">
 </div>
 <div class="trace-area">
-<div class="trace-guide">HARIMAU</div>
+<div class="trace-guide">TIGER</div>
 <canvas id="traceCanvas" width="420" height="100"></canvas>
 </div>
-<button class="check-btn" onclick="checkWriting()">✔ Semak</button>
-<button class="clear-btn" onclick="clearCanvas()">✖ Kosongkan</button>
+<button class="check-btn" onclick="checkWriting()">✔ Check</button>
+<button class="clear-btn" onclick="clearCanvas()">✖ Clear</button>
 <div id="result" class="result"></div>
 </div>
 
@@ -82,28 +82,28 @@ function clearCanvas(){
     document.getElementById("result").innerText=""; 
 }
 
-// ✅ Base64 嵌入音效
-// ⚠️ 这里的 Base64 是示例，实际可用你下载的真实 mp3 转 Base64
+// ✅ Base64 embedded sounds
+// ⚠️ Replace the example Base64 with your actual mp3 Base64 or use URLs
 const successAudio = new Audio("data:audio/mp3;base64,//uQxAAAA..."); 
 const failAudio    = new Audio("data:audio/mp3;base64,//uQxAAAA...");
 
 function playSuccessSound(){ 
     successAudio.currentTime=0; 
-    successAudio.play().catch(e=>console.log("播放失败:", e)); 
+    successAudio.play().catch(e=>console.log("Playback failed:", e)); 
 }
 function playFailSound(){ 
     failAudio.currentTime=0; 
-    failAudio.play().catch(e=>console.log("播放失败:", e)); 
+    failAudio.play().catch(e=>console.log("Playback failed:", e)); 
 }
 
 function checkWriting(){
     const result=document.getElementById("result");
     if(totalLength>900){
-        result.innerHTML="Bagus! 🎉";
+        result.innerHTML="Well done! 🎉";
         result.style.color="green";
         playSuccessSound();
     } else {
-        result.innerHTML="Cuba lagi 😢";
+        result.innerHTML="Try again 😢";
         result.style.color="red";
         playFailSound();
     }
