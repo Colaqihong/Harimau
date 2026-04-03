@@ -136,12 +136,7 @@ canvas.addEventListener("mousedown", e => {
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
 });
-
-canvas.addEventListener("mousemove", e => {
-    if (!drawing) return;
-    drawLine(e.offsetX, e.offsetY);
-});
-
+canvas.addEventListener("mousemove", e => { if(drawing) drawLine(e.offsetX, e.offsetY); });
 canvas.addEventListener("mouseup", () => drawing = false);
 canvas.addEventListener("mouseleave", () => drawing = false);
 
@@ -155,17 +150,13 @@ canvas.addEventListener("touchstart", e => {
     ctx.beginPath();
     ctx.moveTo(lastX, lastY);
 });
-
 canvas.addEventListener("touchmove", e => {
-    if (!drawing) return;
+    if(!drawing) return;
     e.preventDefault();
     const touch = e.touches[0];
     const rect = canvas.getBoundingClientRect();
-    let x = touch.clientX - rect.left;
-    let y = touch.clientY - rect.top;
-    drawLine(x, y);
+    drawLine(touch.clientX - rect.left, touch.clientY - rect.top);
 }, { passive: false });
-
 canvas.addEventListener("touchend", () => drawing = false);
 canvas.addEventListener("touchcancel", () => drawing = false);
 
@@ -176,21 +167,24 @@ function clearCanvas() {
     document.getElementById("result").innerText = "";
 }
 
-/* 🎵 在线轻松音效 */
-function playSuccessSound() {
-    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3'); // 成功音
-    audio.play();
-}
+/* 🎵 预加载音频 */
+const successAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-3.mp3');
+const failAudio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3');
 
+/* 播放函数 */
+function playSuccessSound() {
+    successAudio.currentTime = 0;
+    successAudio.play().catch(e => console.log("播放失败:", e));
+}
 function playFailSound() {
-    const audio = new Audio('https://www.soundjay.com/buttons/sounds/button-10.mp3'); // 失败音
-    audio.play();
+    failAudio.currentTime = 0;
+    failAudio.play().catch(e => console.log("播放失败:", e));
 }
 
 /* 判断 */
 function checkWriting() {
     const result = document.getElementById("result");
-    if (totalLength > 600) {
+    if(totalLength > 900){
         result.innerHTML = "Bagus! 🎉";
         result.style.color = "green";
         playSuccessSound();
