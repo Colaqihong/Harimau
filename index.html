@@ -6,7 +6,7 @@
 
 <style>
 body {
-    font-family: Arial, sans-serif;
+    font-family: Arial;
     background: linear-gradient(to bottom, #a8e6cf, #dcedc1);
     text-align: center;
     padding: 30px;
@@ -20,12 +20,45 @@ body {
     border-radius: 15px;
 }
 
-h1 { color: #2d6a4f; }
-
 .word {
     font-size: 50px;
     font-weight: bold;
-    margin-bottom: 10px;
+}
+
+/* 🧠 关键：统一对齐系统 */
+.trace-area {
+    position: relative;
+    width: 420px;
+    height: 100px;
+    margin: 30px auto;
+}
+
+/* ⭐ 字体垂直居中 */
+.trace-guide {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;   /* 垂直居中 */
+    justify-content: center;
+
+    font-size: 56px;
+    font-weight: bold;
+    letter-spacing: 6px;
+
+    color: transparent;
+    -webkit-text-stroke: 2px #999;
+}
+
+/* ⭐ canvas 完全覆盖 */
+#traceCanvas {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 420px;
+    height: 100px;
+    z-index: 2;
+    border: 1px dashed #ccc;
 }
 
 /* 图片 */
@@ -34,33 +67,10 @@ h1 { color: #2d6a4f; }
     border-radius: 12px;
 }
 
-/* 描字 */
-.trace-area {
-    position: relative;
-    margin: 30px auto;
-    width: 420px;
-    height: 80px;
-}
-
-.trace-guide {
-    position: absolute;
-    width: 100%;
-    font-size: 56px;
-    color: transparent;
-    -webkit-text-stroke: 2px #999;
-    letter-spacing: 6px;
-}
-
-#traceCanvas {
-    position: absolute;
-    z-index: 2;
-    border: 1px dashed #ccc;
-}
-
+/* 按钮 */
 button {
     padding: 12px 20px;
     margin: 10px;
-    font-size: 16px;
     border-radius: 8px;
     border: none;
     cursor: pointer;
@@ -69,11 +79,9 @@ button {
 .check-btn { background: #4CAF50; color: white; }
 .clear-btn { background: #E74C3C; color: white; }
 
-/* 🎉 结果显示 */
 .result {
     font-size: 28px;
     margin-top: 15px;
-    font-weight: bold;
 }
 </style>
 </head>
@@ -81,29 +89,25 @@ button {
 <body>
 
 <div class="container">
-    <h1>Latihan Menulis 🐾</h1>
 
-    <div class="word">HARIMAU</div>
+<h1>Latihan Menulis 🐾</h1>
 
-    <!-- 图片 -->
-    <div class="image-box">
-        <img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg">
-        <br>
-        <a href="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg" download>
-            <button>Muat Turun Gambar</button>
-        </a>
-    </div>
+<div class="word">HARIMAU</div>
 
-    <!-- 描字 -->
-    <div class="trace-area">
-        <div class="trace-guide">HARIMAU</div>
-        <canvas id="traceCanvas" width="420" height="80"></canvas>
-    </div>
+<div class="image-box">
+<img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Tiger.50.jpg">
+</div>
 
-    <button class="check-btn" onclick="checkWriting()">✔ Semak</button>
-    <button class="clear-btn" onclick="clearCanvas()">✖ Kosongkan</button>
+<div class="trace-area">
+    <div class="trace-guide">HARIMAU</div>
+    <canvas id="traceCanvas" width="420" height="100"></canvas>
+</div>
 
-    <div id="result" class="result"></div>
+<button class="check-btn" onclick="checkWriting()">✔ Semak</button>
+<button class="clear-btn" onclick="clearCanvas()">✖ Kosongkan</button>
+
+<div id="result" class="result"></div>
+
 </div>
 
 <script>
@@ -118,7 +122,7 @@ let lastY = 0;
 ctx.lineWidth = 4;
 ctx.lineCap = "round";
 
-/* ✍️ 画字 */
+/* 画字 */
 canvas.addEventListener("mousedown", e => {
     drawing = true;
     lastX = e.offsetX;
@@ -142,6 +146,7 @@ canvas.addEventListener("mousemove", e => {
 });
 
 canvas.addEventListener("mouseup", () => drawing = false);
+canvas.addEventListener("mouseleave", () => drawing = false);
 
 /* 清除 */
 function clearCanvas() {
@@ -150,39 +155,30 @@ function clearCanvas() {
     document.getElementById("result").innerText = "";
 }
 
-/* 🔊 儿童音效（Web Audio） */
+/* 🎉 成功音 */
 function playSuccessSound() {
-    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     for (let i = 0; i < 3; i++) {
-        const osc = ctxAudio.createOscillator();
-        const gain = ctxAudio.createGain();
-
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
         osc.frequency.value = 600 + i * 200;
-        osc.type = "sine";
-
         osc.connect(gain);
-        gain.connect(ctxAudio.destination);
-
-        osc.start(ctxAudio.currentTime + i * 0.1);
-        osc.stop(ctxAudio.currentTime + i * 0.1 + 0.2);
+        gain.connect(audioCtx.destination);
+        osc.start(audioCtx.currentTime + i * 0.1);
+        osc.stop(audioCtx.currentTime + i * 0.1 + 0.2);
     }
 }
 
+/* ❌ 失败音 */
 function playFailSound() {
-    const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
-
-    const osc = ctxAudio.createOscillator();
-    const gain = ctxAudio.createGain();
-
+    const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    const osc = audioCtx.createOscillator();
+    const gain = audioCtx.createGain();
     osc.frequency.value = 200;
-    osc.type = "sawtooth";
-
     osc.connect(gain);
-    gain.connect(ctxAudio.destination);
-
+    gain.connect(audioCtx.destination);
     osc.start();
-    osc.stop(ctxAudio.currentTime + 0.4);
+    osc.stop(audioCtx.currentTime + 0.4);
 }
 
 /* 判断 */
